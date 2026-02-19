@@ -1,14 +1,20 @@
+import sys
+import os
+
+# Add project root to Python path
+sys.path.append(os.path.abspath("."))
+
 from app.rag.retriever import get_retriever
 
 retriever = get_retriever()
 
-query = "Why did 500 errors increase after deployment?"
+query = "500 error after deployment"
 
-docs = retriever.get_relevant_documents(query)
+docs = retriever.invoke(query)
 
-print("Retrieved Documents:\n")
+
+print("Number of retrieved docs:", len(docs))
 
 for i, doc in enumerate(docs):
-    print(f"--- Chunk {i+1} ---")
+    print(f"\n--- Chunk {i+1} ---")
     print(doc.page_content)
-    print("\n")
