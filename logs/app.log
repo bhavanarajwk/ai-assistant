@@ -1,0 +1,8 @@
+2026-02-18 10:20:01 INFO API-Gateway Request received /checkout
+2026-02-18 10:20:02 INFO PaymentService Payment initiated
+2026-02-18 10:30:00 INFO Deployment Version v2.1 released
+2026-02-18 10:31:01 ERROR PaymentService NullPointerException
+2026-02-18 10:31:05 ERROR PaymentService NullPointerException
+2026-02-18 10:31:10 WARN DB Connection pool exhausted
+2026-02-18 10:32:00 ERROR API-Gateway 500 Internal Server Error
+2026-02-18 10:32:10 ERROR API-Gateway 500 Internal Server Error
