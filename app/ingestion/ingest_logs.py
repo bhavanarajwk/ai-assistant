@@ -44,7 +44,7 @@ def ingest_logs():
         persist_directory=PERSIST_DIR
     )
 
-    print("✅ Ingestion complete.")
+    print("Ingestion complete.")
 
 
 if __name__ == "__main__":
