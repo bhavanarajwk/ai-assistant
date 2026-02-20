@@ -4,7 +4,6 @@ from langchain_core.messages import HumanMessage, ToolMessage
 from app.tools.log_tools import analyze_error_spike
 from app.rag.retriever import get_retriever
 
-
 def create_agent():
     llm = ChatOllama(
         model="qwen2.5:3b",

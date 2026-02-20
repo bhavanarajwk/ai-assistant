@@ -1,39 +1,42 @@
-import os
-from langchain_community.document_loaders import TextLoader
-from langchain_text_splitters import CharacterTextSplitter
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import OllamaEmbeddings
+from langchain_core.documents import Document
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings
 
-# Paths
 LOG_PATH = "logs/app.log"
 PERSIST_DIR = "data/vectorstore"
+
+
+def chunk_logs_by_lines(log_text, lines_per_chunk=15):
+    lines = log_text.split("\n")
+    chunks = []
+
+    for i in range(0, len(lines), lines_per_chunk):
+        chunk = "\n".join(lines[i:i+lines_per_chunk])
+        if chunk.strip():
+            chunks.append(chunk)
+
+    return chunks
+
 
 def ingest_logs():
     print("Loading logs...")
 
-    # Load log file
-    loader = TextLoader(LOG_PATH)
-    documents = loader.load()
+    with open(LOG_PATH, "r") as f:
+        log_text = f.read()
 
-    print("Splitting logs into chunks...")
+    print("Chunking logs by lines...")
 
-    # Split logs into chunks
-    text_splitter = CharacterTextSplitter(
-        chunk_size=300,
-        chunk_overlap=50
-    )
+    chunks = chunk_logs_by_lines(log_text, lines_per_chunk=15)
 
-    docs = text_splitter.split_documents(documents)
+    docs = [Document(page_content=chunk) for chunk in chunks]
 
     print(f"Total chunks created: {len(docs)}")
-
-    print("Creating embeddings using Ollama...")
 
     embeddings = OllamaEmbeddings(
         model="nomic-embed-text"
     )
 
-    print("Storing in Chroma vector DB...")
+    print("Storing in Chroma...")
 
     vectorstore = Chroma.from_documents(
         documents=docs,
@@ -41,9 +44,8 @@ def ingest_logs():
         persist_directory=PERSIST_DIR
     )
 
-    vectorstore.persist()
+    print("✅ Ingestion complete.")
 
-    print("✅ Logs successfully ingested and stored!")
 
 if __name__ == "__main__":
     ingest_logs()
