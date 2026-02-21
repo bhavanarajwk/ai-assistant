@@ -18,11 +18,9 @@ def create_agent():
 def run_agent(agent_tuple, user_input: str):
     llm, retriever = agent_tuple
 
-    # 🔥 STEP 1 — Retrieve relevant log context
     retrieved_docs = retriever.invoke(user_input)
     context = "\n\n".join([doc.page_content for doc in retrieved_docs])
 
-    # Inject context into user question
     enhanced_input = f"""
     Relevant logs from system:
     {context}
@@ -33,10 +31,8 @@ def run_agent(agent_tuple, user_input: str):
 
     messages = [HumanMessage(content=enhanced_input)]
 
-    # 🔥 STEP 2 — First LLM call
     response = llm.invoke(messages)
 
-    # 🔥 STEP 3 — If tool is called
     if response.tool_calls:
         for tool_call in response.tool_calls:
             tool_name = tool_call["name"]
@@ -52,7 +48,6 @@ def run_agent(agent_tuple, user_input: str):
                     )
                 )
 
-        # 🔥 STEP 4 — Final LLM call
         final_response = llm.invoke(messages)
         return final_response.content
 
