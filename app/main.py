@@ -40,7 +40,7 @@ def query_agent(request: QueryRequest):
 @app.post("/create-token")
 async def create_token(request: TokenRequest):
 
-    # 1️⃣ Create user token (sync — this is fine)
+    
     token = api.AccessToken(
         LIVEKIT_API_KEY,
         LIVEKIT_API_SECRET
@@ -55,7 +55,6 @@ async def create_token(request: TokenRequest):
         )
     ).to_jwt()
 
-    # 2️⃣ Proper async dispatch (FIX)
     async with api.LiveKitAPI(
         url=LIVEKIT_URL,
         api_key=LIVEKIT_API_KEY,
@@ -64,7 +63,7 @@ async def create_token(request: TokenRequest):
 
         await lk_api.agent_dispatch.create_dispatch(
             api.CreateAgentDispatchRequest(
-                agent_name="incident-agent",  # must match worker name
+                agent_name="incident-agent", 
                 room=request.room,
             )
         )
