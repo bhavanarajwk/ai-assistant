@@ -12,12 +12,9 @@ LIVEKIT_URL = os.getenv("LIVEKIT_URL")
 LIVEKIT_API_KEY = os.getenv("LIVEKIT_API_KEY")
 LIVEKIT_API_SECRET = os.getenv("LIVEKIT_API_SECRET")
 
-
 app = FastAPI()
 
 agent_instance = create_agent()
-
-
 
 
 class QueryRequest(BaseModel):
@@ -29,11 +26,9 @@ class TokenRequest(BaseModel):
     room: str
 
 
-
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
-
 
 
 @app.post("/query")
@@ -43,7 +38,9 @@ def query_agent(request: QueryRequest):
 
 
 @app.post("/create-token")
-def create_token(request: TokenRequest):
+async def create_token(request: TokenRequest):
+
+    
     token = api.AccessToken(
         LIVEKIT_API_KEY,
         LIVEKIT_API_SECRET
@@ -57,6 +54,19 @@ def create_token(request: TokenRequest):
             room=request.room,
         )
     ).to_jwt()
+
+    async with api.LiveKitAPI(
+        url=LIVEKIT_URL,
+        api_key=LIVEKIT_API_KEY,
+        api_secret=LIVEKIT_API_SECRET,
+    ) as lk_api:
+
+        await lk_api.agent_dispatch.create_dispatch(
+            api.CreateAgentDispatchRequest(
+                agent_name="incident-agent", 
+                room=request.room,
+            )
+        )
 
     return {
         "token": token,
