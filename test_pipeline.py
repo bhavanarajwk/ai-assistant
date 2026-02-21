@@ -21,7 +21,6 @@ def query_ollama(prompt: str):
     )
     return response.json()["response"]
 
-# Step 1: Use any short wav file you have
 audio_file = "input.wav"
 
 print("Transcribing...")

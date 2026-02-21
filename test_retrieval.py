@@ -1,7 +1,6 @@
 import sys
 import os
 
-# Add project root to Python path
 sys.path.append(os.path.abspath("."))
 
 from app.rag.retriever import get_retriever

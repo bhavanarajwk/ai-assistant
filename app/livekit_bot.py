@@ -1,6 +1,5 @@
 import os
 
-# ✅ ADD YOUR FFMPEG BIN PATH HERE
 os.environ["PATH"] += os.pathsep + r"C:\Users\ADMIN\Downloads\ffmpeg-8.0.1-essentials_build\bin"
 
 import asyncio
@@ -24,10 +23,6 @@ stt_model = whisper.load_model("base")
 
 audio_buffer = []
 
-
-# =========================
-# TTS
-# =========================
 async def text_to_speech(text: str) -> str:
     filename = f"{uuid.uuid4()}.wav"
     communicate = edge_tts.Communicate(
@@ -38,9 +33,6 @@ async def text_to_speech(text: str) -> str:
     return filename
 
 
-# =========================
-# Speak in LiveKit
-# =========================
 async def speak(room: rtc.Room, wav_path: str):
 
     data, sample_rate = sf.read(wav_path)
@@ -79,9 +71,6 @@ async def speak(room: rtc.Room, wav_path: str):
     await room.local_participant.unpublish_track(publication.sid)
 
 
-# =========================
-# Process Audio
-# =========================
 async def process_audio(room: rtc.Room, frames):
 
     print("Processing audio...")
@@ -89,7 +78,7 @@ async def process_audio(room: rtc.Room, frames):
     audio_np = np.concatenate(frames).astype(np.float32) / 32768.0
     sf.write("temp.wav", audio_np, 16000)
 
-    # 🔥 Whisper now works because ffmpeg is available
+  
     result = stt_model.transcribe("temp.wav")
     user_text = result["text"].strip()
 
@@ -112,9 +101,6 @@ async def process_audio(room: rtc.Room, frames):
     await speak(room, wav_file)
 
 
-# =========================
-# Main
-# =========================
 async def main(room_name: str, token: str):
 
     room = rtc.Room()

@@ -14,9 +14,6 @@ load_dotenv()
 
 LIVEKIT_URL = os.getenv("LIVEKIT_URL")
 
-# ---------------------------
-# Load Models Once
-# ---------------------------
 
 print("Loading Whisper...")
 stt_model = whisper.load_model("base")
@@ -28,9 +25,7 @@ print("Loading Agent...")
 agent_instance = create_agent()
 
 
-# ---------------------------
-# Audio Utilities
-# ---------------------------
+
 
 async def transcribe_audio(audio_np, sample_rate):
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmpfile:
@@ -44,9 +39,6 @@ async def synthesize_speech(text):
     return np.array(wav), 22050
 
 
-# ---------------------------
-# Voice Handler
-# ---------------------------
 
 async def handle_audio(room, track):
     print("Receiving audio...")
@@ -56,7 +48,6 @@ async def handle_audio(room, track):
     async for frame in track:
         audio_frames.append(frame.data)
 
-        # Collect 3 seconds of audio
         if len(audio_frames) > 150:
             audio_np = np.concatenate(audio_frames)
 
@@ -73,7 +64,6 @@ async def handle_audio(room, track):
             print("Synthesizing speech...")
             wav, sr = await synthesize_speech(response)
 
-            # Publish back to room
             source = rtc.AudioSource(sr, 1)
             await room.local_participant.publish_track(source)
 
@@ -88,9 +78,6 @@ async def handle_audio(room, track):
             audio_frames = []
 
 
-# ---------------------------
-# Main
-# ---------------------------
 
 async def main(room_name: str, token: str):
     room = rtc.Room()
